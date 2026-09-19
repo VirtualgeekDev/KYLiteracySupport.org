@@ -254,26 +254,13 @@ export default function GetInvolvedPage() {
               </div>
 
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-                {siteConfig.donationUrl ? (
-                  <a
-                    href={siteConfig.donationUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gold-600 px-6 py-3.5 text-base font-bold text-white shadow-sm hover:bg-gold-700 transition-colors"
-                  >
-                    <Heart className="h-4 w-4 fill-current" />
-                    <span>Support Our Mission</span>
-                  </a>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleDonateClick}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gold-600 px-6 py-3.5 text-base font-bold text-white shadow-sm hover:bg-gold-700 transition-colors"
-                  >
-                    <Heart className="h-4 w-4 fill-current" />
-                    <span>Support Our Mission</span>
-                  </button>
-                )}
+                <Link
+                  href="/donate"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gold-600 px-6 py-3.5 text-base font-bold text-white shadow-sm hover:bg-gold-700 transition-colors"
+                >
+                  <Heart className="h-4 w-4 fill-current" />
+                  <span>Donate Online (/donate)</span>
+                </Link>
 
                 <Link
                   href="/contact?reason=Donation"

@@ -17,18 +17,16 @@ export const siteConfig = {
     "Kentucky Literacy Foundation, Inc. is organized around educational and charitable activities focused on literacy and learning support.",
 
   // Contact Information & Configuration
-  // TODO: Update with official verified organizational contacts when issued
   contact: {
     email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "info@kyliteracysupport.org",
     displayEmail: "info@kyliteracysupport.org",
-    phone: "Contact via web form", // Placeholder - do not invent fake number
+    phone: "Contact via web form",
     serviceArea: "Commonwealth of Kentucky",
     inquiriesResponseTime: "Within 2-3 business days",
   },
 
   // Donation Platform Integration
-  // TODO: Connect official verified donation processing URL (e.g., Givebutter, Stripe Climate/Billing, Donorbox)
-  donationUrl: process.env.NEXT_PUBLIC_DONATION_URL || "",
+  donationUrl: "/donate",
 
   // Navigation Links
   mainNav: [
@@ -49,8 +47,8 @@ export const siteConfig = {
       { title: "Contact Us", href: "/contact" },
     ],
     getInvolved: [
+      { title: "Donate to Mission", href: "/donate" },
       { title: "Volunteer", href: "/get-involved#volunteer" },
-      { title: "Support Our Mission", href: "/get-involved#donate" },
       { title: "Donate Books & Supplies", href: "/get-involved#books-supplies" },
       { title: "Community Partnerships", href: "/get-involved#partnerships" },
     ],
