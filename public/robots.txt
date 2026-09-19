@@ -1,0 +1,10 @@
+# Robots.txt for Kentucky Literacy Foundation, Inc.
+# https://KYLiteracySupport.org
+
+User-agent: *
+Allow: /
+
+# Exclude internal API routes
+Disallow: /api/
+
+Sitemap: https://KYLiteracySupport.org/sitemap.xml
