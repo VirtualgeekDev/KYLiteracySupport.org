@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1B365D"/>
+      <stop offset="100%" stop-color="#0F2137"/>
+    </linearGradient>
+  </defs>
+  <!-- Background with subtle rounded corners -->
+  <rect width="32" height="32" rx="8" fill="url(#bgGrad)"/>
+  <rect width="30" height="30" x="1" y="1" rx="7" fill="none" stroke="#FDE68A" stroke-width="0.75" stroke-opacity="0.3"/>
+  <!-- Open Book & Growth Sprout Icon -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(4, 4)">
+    <!-- Book pages -->
+    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" stroke="#FDE68A" stroke-width="2"/>
+    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" stroke="#FDE68A" stroke-width="2"/>
+    <!-- Growth sprout in warm gold -->
+    <path d="M12 7v5" stroke="#F59E0B" stroke-width="2.4"/>
+    <path d="M10 8.5c1-1 2-1 2-1s1 0 2 1" stroke="#F59E0B" stroke-width="2"/>
+  </g>
+</svg>
