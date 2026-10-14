@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { getPaymentLinkByToken, getSettings } from "@/lib/db";
 import { isStripeConfigured } from "@/lib/stripe";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(
   request: Request,
   { params }: { params: { token: string } }
@@ -26,15 +29,25 @@ export async function GET(
   const configured = isStripeConfigured(activeMode);
   const stripeActive = settings.stripe_active && configured;
 
-  return NextResponse.json({
-    valid: true,
-    status: link.status,
-    amount: link.amount,
-    currency: link.currency,
-    donorName: link.donor_name || "",
-    donorEmail: link.donor_email || "",
-    reference: link.reference || "",
-    stripeActive,
-    stripeMode: activeMode,
-  });
+  return NextResponse.json(
+    {
+      valid: true,
+      status: link.status,
+      amount: link.amount,
+      currency: link.currency,
+      donorName: link.donor_name || "",
+      donorEmail: link.donor_email || "",
+      reference: link.reference || "",
+      stripeActive,
+      stripeMode: activeMode,
+      isConfigured: configured,
+    },
+    {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    }
+  );
 }

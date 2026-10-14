@@ -33,6 +33,9 @@ export function getStripeSecretKey(mode?: StripeMode): string {
   if (targetMode === "test") {
     return (
       process.env.STRIPE_TEST_SECRET_KEY ||
+      process.env.STRIPE_TEST_SECRET ||
+      process.env.STRIPE_TEST_KEY ||
+      process.env.STRIPE_SECRET_KEY_TEST ||
       (process.env.STRIPE_SECRET_KEY?.startsWith("sk_test_") ||
       process.env.STRIPE_SECRET_KEY?.startsWith("rk_test_")
         ? process.env.STRIPE_SECRET_KEY
@@ -41,6 +44,9 @@ export function getStripeSecretKey(mode?: StripeMode): string {
   } else {
     return (
       process.env.STRIPE_LIVE_SECRET_KEY ||
+      process.env.STRIPE_LIVE_SECRET ||
+      process.env.STRIPE_LIVE_KEY ||
+      process.env.STRIPE_SECRET_KEY_LIVE ||
       (process.env.STRIPE_SECRET_KEY?.startsWith("sk_live_") ||
       process.env.STRIPE_SECRET_KEY?.startsWith("rk_live_")
         ? process.env.STRIPE_SECRET_KEY
