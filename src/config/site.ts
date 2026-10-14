@@ -18,9 +18,11 @@ export const siteConfig = {
 
   // Contact Information & Configuration
   contact: {
-    email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "info@kyliteracysupport.org",
-    displayEmail: "info@kyliteracysupport.org",
-    phone: "Contact via web form",
+    email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "contact@kyliteracysupport.org",
+    displayEmail: "contact@kyliteracysupport.org",
+    phone: "+1 (719) 512-4541",
+    rawPhone: "+17195124541",
+    address: "271 W. Short St Ste 410 #2963, Lexington, KY 40507",
     serviceArea: "Commonwealth of Kentucky",
     inquiriesResponseTime: "Within 2-3 business days",
   },

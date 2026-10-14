@@ -27,6 +27,7 @@ export interface PaymentLinkRecord {
   token: string;
   amount: number;
   currency: string;
+  language?: string;
   donor_name?: string;
   donor_email?: string;
   reference?: string;
@@ -229,6 +230,8 @@ export function getPaymentLinkByToken(token: string): PaymentLinkRecord | undefi
 
 export function createPaymentLink(data: {
   amount: number;
+  currency?: string;
+  language?: string;
   donor_name?: string;
   donor_email?: string;
   reference?: string;
@@ -238,11 +241,22 @@ export function createPaymentLink(data: {
   const token = crypto.randomBytes(24).toString("hex"); // 48-char cryptographically secure unguessable token
   const now = new Date().toISOString();
 
+  const validCurrencies = ["usd", "eur", "gbp"];
+  const currency = data.currency && validCurrencies.includes(data.currency.toLowerCase())
+    ? data.currency.toLowerCase()
+    : "usd";
+
+  const validLanguages = ["en", "es", "fr", "de"];
+  const language = data.language && validLanguages.includes(data.language.toLowerCase())
+    ? data.language.toLowerCase()
+    : "en";
+
   const record: PaymentLinkRecord = {
     id,
     token,
     amount: Math.round(data.amount * 100) / 100,
-    currency: "usd",
+    currency,
+    language,
     donor_name: data.donor_name?.trim() || undefined,
     donor_email: data.donor_email?.trim() || undefined,
     reference: data.reference?.trim() || undefined,

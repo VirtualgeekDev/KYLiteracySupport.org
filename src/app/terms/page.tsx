@@ -137,10 +137,42 @@ export default function TermsPage() {
 
           <div>
             <h2 className="font-heading text-xl font-bold text-navy-950 sm:text-2xl mb-3">
-              9. Contact
+              9. Corporation &amp; Contact Details
             </h2>
-            <p>
-              For any questions regarding these Terms of Use, please reach out via our{" "}
+            <p className="mb-4">
+              For any questions regarding these Terms of Use or our organizational operations,
+              please contact Kentucky Literacy Foundation, Inc. using our official corporate details:
+            </p>
+            <div className="rounded-2xl border border-navy-100 bg-surface-light p-5 space-y-2.5 text-xs sm:text-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-navy-200/60 pb-2">
+                <span className="font-semibold text-navy-600">Business Name:</span>
+                <span className="font-bold text-navy-950">Kentucky Literacy Foundation, Inc.</span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-navy-200/60 pb-2">
+                <span className="font-semibold text-navy-600">Business Address:</span>
+                <span className="font-medium text-navy-900">271 W. Short St Ste 410 #2963, Lexington, KY 40507</span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-navy-200/60 pb-2">
+                <span className="font-semibold text-navy-600">Website:</span>
+                <a href="https://KYLiteracySupport.org" className="font-medium text-navy-900 underline hover:text-gold-700">
+                  KYLiteracySupport.org
+                </a>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-navy-200/60 pb-2">
+                <span className="font-semibold text-navy-600">Phone Number:</span>
+                <a href="tel:+17195124541" className="font-medium text-navy-900 hover:text-gold-700">
+                  +17195124541
+                </a>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                <span className="font-semibold text-navy-600">Email:</span>
+                <a href="mailto:contact@kyliteracysupport.org" className="font-medium text-navy-900 underline hover:text-gold-700">
+                  contact@kyliteracysupport.org
+                </a>
+              </div>
+            </div>
+            <p className="mt-4 text-xs text-navy-500">
+              You may also reach our team anytime via our online{" "}
               <Link
                 href="/contact"
                 className="font-bold text-navy-900 underline underline-offset-4 hover:text-gold-700"

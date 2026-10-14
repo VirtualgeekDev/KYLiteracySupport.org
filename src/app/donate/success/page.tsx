@@ -5,12 +5,8 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   CheckCircle2,
-  Heart,
   ArrowRight,
-  BookOpen,
   Printer,
-  Calendar,
-  ShieldCheck,
   Loader2,
 } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
@@ -45,6 +41,10 @@ function SuccessContent() {
     verify();
   }, [sessionId, donationId]);
 
+  const currencyCode = (details?.currency || "USD").toUpperCase();
+  const currencySymbol =
+    currencyCode === "EUR" ? "€" : currencyCode === "GBP" ? "£" : "$";
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
       <div className="rounded-3xl border border-navy-100 bg-white p-8 sm:p-12 shadow-xl text-center space-y-6">
@@ -58,11 +58,11 @@ function SuccessContent() {
             Payment Confirmed
           </span>
           <h1 className="font-heading text-3xl font-extrabold text-navy-950 sm:text-4xl">
-            Thank You for Your Gift!
+            Thank You for Your Payment!
           </h1>
           <p className="text-base text-navy-600 leading-relaxed max-w-md mx-auto">
-            Your generous contribution to Kentucky Literacy Foundation, Inc. directly supports
-            essential literacy programs, free book distributions, and educational tutoring.
+            Your payment to Kentucky Literacy Foundation, Inc. has been successfully processed.
+            Thank you for supporting our educational programs and literacy initiatives.
           </p>
         </div>
 
@@ -75,29 +75,29 @@ function SuccessContent() {
         ) : details ? (
           <div className="rounded-2xl border border-navy-100 bg-surface-light p-6 text-left space-y-3">
             <div className="flex items-center justify-between border-b border-navy-200/60 pb-3">
-              <span className="text-xs font-semibold uppercase text-navy-500">Amount</span>
+              <span className="text-xs font-semibold uppercase text-navy-500">Amount Paid</span>
               <span className="font-heading text-2xl font-extrabold text-navy-900">
-                ${details.amount?.toFixed(2)} {details.currency || "USD"}
+                {currencySymbol}{details.amount?.toFixed(2)} {currencyCode}
               </span>
             </div>
 
             <div className="flex items-center justify-between text-xs py-1">
-              <span className="text-navy-500">Frequency:</span>
+              <span className="text-navy-500">Payment Type:</span>
               <span className="font-semibold text-navy-800">
-                {details.frequency === "monthly" ? "Monthly Recurring Donation" : "One-Time Donation"}
+                {details.frequency === "monthly" ? "Monthly Recurring Payment" : "One-Time Payment"}
               </span>
             </div>
 
             {details.donorName && (
               <div className="flex items-center justify-between text-xs py-1">
-                <span className="text-navy-500">Donor:</span>
+                <span className="text-navy-500">Payer Name:</span>
                 <span className="font-semibold text-navy-800">{details.donorName}</span>
               </div>
             )}
 
             {details.donationId && (
               <div className="flex items-center justify-between text-xs py-1">
-                <span className="text-navy-500">Reference ID:</span>
+                <span className="text-navy-500">Transaction ID:</span>
                 <span className="font-mono text-[11px] text-navy-600">{details.donationId}</span>
               </div>
             )}
@@ -136,7 +136,7 @@ function SuccessContent() {
         </div>
 
         <div className="pt-4 text-xs text-navy-400">
-          A receipt has been sent to your email address if provided during checkout.
+          A confirmation receipt has been sent to your email address if provided during checkout.
         </div>
       </div>
     </div>
@@ -148,8 +148,8 @@ export default function DonateSuccessPage() {
     <>
       <JsonLd
         type="WebPage"
-        pageTitle="Donation Successful | Kentucky Literacy Foundation, Inc."
-        pageDescription="Thank you for your donation to Kentucky Literacy Foundation, Inc."
+        pageTitle="Payment Successful | Kentucky Literacy Foundation, Inc."
+        pageDescription="Thank you for your payment to Kentucky Literacy Foundation, Inc."
         pageUrl={`${siteConfig.url}/donate/success`}
       />
       <div className="min-h-[70vh] bg-surface-light flex items-center justify-center">

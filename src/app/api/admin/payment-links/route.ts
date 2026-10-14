@@ -22,12 +22,12 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { amount, donor_name, donor_email, reference } = body;
+    const { amount, donor_name, donor_email, reference, currency, language } = body;
 
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount < 1) {
       return NextResponse.json(
-        { error: "Please enter a valid amount ($1.00 USD or more)." },
+        { error: "Please enter a valid amount (minimum 1.00)." },
         { status: 400 }
       );
     }
@@ -37,6 +37,8 @@ export async function POST(request: Request) {
       donor_name,
       donor_email,
       reference,
+      currency,
+      language,
     });
 
     // Determine host for generated link URL

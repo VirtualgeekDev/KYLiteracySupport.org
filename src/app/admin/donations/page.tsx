@@ -50,6 +50,8 @@ export default function AdminDonationsPage() {
 
   // Custom link generator form
   const [linkAmount, setLinkAmount] = useState("75");
+  const [linkCurrency, setLinkCurrency] = useState<"usd" | "eur" | "gbp">("usd");
+  const [linkLanguage, setLinkLanguage] = useState<"en" | "es" | "fr" | "de">("en");
   const [linkDonorName, setLinkDonorName] = useState("");
   const [linkDonorEmail, setLinkDonorEmail] = useState("");
   const [linkReference, setLinkReference] = useState("");
@@ -174,6 +176,8 @@ export default function AdminDonationsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           amount: parseFloat(linkAmount),
+          currency: linkCurrency,
+          language: linkLanguage,
           donor_name: linkDonorName.trim() || undefined,
           donor_email: linkDonorEmail.trim() || undefined,
           reference: linkReference.trim() || undefined,
@@ -182,10 +186,11 @@ export default function AdminDonationsPage() {
 
       const data = await res.json();
       if (res.ok && data.url) {
+        const symbol = linkCurrency === "eur" ? "€" : linkCurrency === "gbp" ? "£" : "$";
         setLastGeneratedUrl(data.url);
         setFeedbackMsg({
           type: "success",
-          text: `Successfully generated custom payment link for $${parseFloat(linkAmount).toFixed(2)}.`,
+          text: `Successfully generated custom payment link for ${symbol}${parseFloat(linkAmount).toFixed(2)} (${linkCurrency.toUpperCase()}, ${linkLanguage.toUpperCase()}).`,
         });
         setLinkDonorName("");
         setLinkDonorEmail("");
@@ -513,14 +518,14 @@ export default function AdminDonationsPage() {
             </div>
           </div>
 
-          <form onSubmit={handleGenerateLink} className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-            <div>
+          <form onSubmit={handleGenerateLink} className="grid grid-cols-1 gap-4 sm:grid-cols-6">
+            <div className="sm:col-span-2">
               <label className="block text-xs font-bold uppercase tracking-wider text-navy-800 mb-1">
-                Amount (USD) <span className="text-red-500">*</span>
+                Amount <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-navy-500">
-                  $
+                  {linkCurrency === "eur" ? "€" : linkCurrency === "gbp" ? "£" : "$"}
                 </span>
                 <input
                   type="number"
@@ -535,9 +540,40 @@ export default function AdminDonationsPage() {
               </div>
             </div>
 
-            <div>
+            <div className="sm:col-span-2">
               <label className="block text-xs font-bold uppercase tracking-wider text-navy-800 mb-1">
-                Donor Name <span className="font-normal text-navy-400">(Optional)</span>
+                Currency <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={linkCurrency}
+                onChange={(e) => setLinkCurrency(e.target.value as any)}
+                className="w-full rounded-xl border border-navy-200 py-2.5 px-3 text-sm font-bold text-navy-900 bg-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+              >
+                <option value="usd">USD ($) - US Dollar</option>
+                <option value="eur">EUR (€) - Euro</option>
+                <option value="gbp">GBP (£) - British Pound</option>
+              </select>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-navy-800 mb-1">
+                Language <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={linkLanguage}
+                onChange={(e) => setLinkLanguage(e.target.value as any)}
+                className="w-full rounded-xl border border-navy-200 py-2.5 px-3 text-sm font-bold text-navy-900 bg-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+              >
+                <option value="en">English (EN)</option>
+                <option value="es">Español (ES)</option>
+                <option value="fr">Français (FR)</option>
+                <option value="de">Deutsch (DE)</option>
+              </select>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-navy-800 mb-1">
+                Recipient Name <span className="font-normal text-navy-400">(Optional)</span>
               </label>
               <input
                 type="text"
@@ -548,9 +584,9 @@ export default function AdminDonationsPage() {
               />
             </div>
 
-            <div>
+            <div className="sm:col-span-2">
               <label className="block text-xs font-bold uppercase tracking-wider text-navy-800 mb-1">
-                Donor Email <span className="font-normal text-navy-400">(Optional)</span>
+                Recipient Email <span className="font-normal text-navy-400">(Optional)</span>
               </label>
               <input
                 type="email"
@@ -561,7 +597,7 @@ export default function AdminDonationsPage() {
               />
             </div>
 
-            <div>
+            <div className="sm:col-span-2">
               <label className="block text-xs font-bold uppercase tracking-wider text-navy-800 mb-1">
                 Reference / Memo <span className="font-normal text-navy-400">(Optional)</span>
               </label>
@@ -569,12 +605,12 @@ export default function AdminDonationsPage() {
                 type="text"
                 value={linkReference}
                 onChange={(e) => setLinkReference(e.target.value)}
-                placeholder="e.g. Annual Gala Pledge"
+                placeholder="e.g. Educational Sponsorship"
                 className="w-full rounded-xl border border-navy-200 px-3 py-2.5 text-sm text-navy-900 placeholder:text-navy-400 focus:outline-none focus:ring-2 focus:ring-gold-500"
               />
             </div>
 
-            <div className="sm:col-span-4 pt-2">
+            <div className="sm:col-span-6 pt-2">
               <button
                 type="submit"
                 disabled={isGeneratingLink}
@@ -657,12 +693,21 @@ export default function AdminDonationsPage() {
 
                     return (
                       <tr key={link.id} className="hover:bg-navy-50/40">
-                        <td className="px-4 py-3 font-extrabold text-navy-900">
-                          ${link.amount.toFixed(2)}
+                        <td className="px-4 py-3 font-extrabold text-navy-900 whitespace-nowrap">
+                          {link.currency === "eur" ? "€" : link.currency === "gbp" ? "£" : "$"}
+                          {link.amount.toFixed(2)}{" "}
+                          <span className="text-[10px] text-navy-500 font-bold uppercase">
+                            {link.currency || "usd"}
+                          </span>
                         </td>
                         <td className="px-4 py-3">
-                          <div className="font-semibold text-navy-900">
-                            {link.donor_name || "General Donor"}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-semibold text-navy-900">
+                              {link.donor_name || "General Payer"}
+                            </span>
+                            <span className="rounded bg-navy-100 text-navy-800 px-1.5 py-0.5 text-[9px] font-extrabold uppercase border border-navy-200/60">
+                              {(link.language || "en").toUpperCase()}
+                            </span>
                           </div>
                           {link.donor_email && (
                             <div className="text-[11px] text-navy-500">{link.donor_email}</div>

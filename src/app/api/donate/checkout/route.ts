@@ -38,6 +38,7 @@ export async function POST(request: Request) {
       );
     }
 
+    let currency = "usd";
     // Verify custom payment link if token provided
     if (paymentLinkToken) {
       const link = getPaymentLinkByToken(paymentLinkToken);
@@ -46,6 +47,14 @@ export async function POST(request: Request) {
           { error: "This custom payment link has expired or has been revoked." },
           { status: 400 }
         );
+      }
+      if (link.currency) {
+        currency = link.currency.toLowerCase();
+      }
+    } else if (body.currency) {
+      const c = body.currency.toLowerCase();
+      if (["usd", "eur", "gbp"].includes(c)) {
+        currency = c;
       }
     }
 
@@ -61,7 +70,7 @@ export async function POST(request: Request) {
       donor_email: donorEmail?.trim() || "",
       amount: numAmount,
       amount_cents: amountCents,
-      currency: "usd",
+      currency,
       frequency,
       status: "pending",
       payment_link_token: paymentLinkToken,
@@ -78,6 +87,7 @@ export async function POST(request: Request) {
 
     const session = await createDonationCheckoutSession({
       amount: numAmount,
+      currency,
       frequency,
       donorName: donorName?.trim(),
       donorEmail: donorEmail?.trim(),

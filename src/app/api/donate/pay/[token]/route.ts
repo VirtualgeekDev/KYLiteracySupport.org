@@ -38,6 +38,7 @@ export async function GET(
       donorName: link.donor_name || "",
       donorEmail: link.donor_email || "",
       reference: link.reference || "",
+      language: link.language || "en",
       stripeActive,
       stripeMode: activeMode,
       isConfigured: configured,
