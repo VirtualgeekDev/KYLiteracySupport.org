@@ -1,7 +1,8 @@
 {
   "settings": {
     "stripe_active": true,
-    "updated_at": "2026-09-19T15:06:45.222Z"
+    "stripe_mode": "test",
+    "updated_at": "2026-10-14T21:46:00.000Z"
   },
   "donations": [
     {

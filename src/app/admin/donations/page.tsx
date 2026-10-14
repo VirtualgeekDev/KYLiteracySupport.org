@@ -27,6 +27,8 @@ import {
   AlertCircle,
   FileText,
   Loader2,
+  Zap,
+  FlaskConical,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
@@ -123,6 +125,40 @@ export default function AdminDonationsPage() {
       }
     } catch (err) {
       setFeedbackMsg({ type: "error", text: "Network error updating settings." });
+    }
+  };
+
+  // Switch Stripe Mode between Live and Test
+  const handleSetMode = async (mode: "live" | "test") => {
+    if (stripeSettings.stripe_mode === mode) return;
+    try {
+      const res = await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stripe_mode: mode }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setStripeSettings((prev: any) => ({
+          ...prev,
+          stripe_mode: mode,
+          is_configured: data.is_configured,
+          publishable_key: data.publishable_key,
+        }));
+        setFeedbackMsg({
+          type: "success",
+          text: `Stripe mode switched to ${
+            mode === "live" ? "⚡ LIVE PRODUCTION" : "🧪 TEST / SANDBOX"
+          } mode.`,
+        });
+      } else {
+        setFeedbackMsg({
+          type: "error",
+          text: data.error || "Failed to switch Stripe mode.",
+        });
+      }
+    } catch (err) {
+      setFeedbackMsg({ type: "error", text: "Network error updating Stripe mode." });
     }
   };
 
@@ -276,64 +312,136 @@ export default function AdminDonationsPage() {
 
         {/* Global Stripe Activation Control & Metrics */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          {/* Card 1: Global Stripe Status & Toggle Switch */}
-          <div className="lg:col-span-5 rounded-3xl border border-navy-100 bg-white p-6 sm:p-8 shadow-sm flex flex-col justify-between space-y-6">
-            <div>
-              <div className="flex items-center justify-between mb-4">
+          {/* Card 1: Global Stripe Status, Mode & Toggle Switch */}
+          <div className="lg:col-span-6 rounded-3xl border border-navy-100 bg-white p-6 sm:p-8 shadow-sm flex flex-col justify-between space-y-6">
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-navy-500">
                   Global Payment Gate
                 </span>
-                <span
-                  className={cn(
-                    "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-extrabold uppercase tracking-wide",
-                    stripeSettings.stripe_active
-                      ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
-                      : "bg-amber-100 text-amber-800 border border-amber-200"
-                  )}
-                >
-                  {stripeSettings.stripe_active ? (
-                    <>
-                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-                      <span>Stripe ACTIVE</span>
-                    </>
-                  ) : (
-                    <>
-                      <ShieldAlert className="h-3.5 w-3.5 text-amber-600" />
-                      <span>Stripe INACTIVE</span>
-                    </>
-                  )}
-                </span>
+                <div className="flex items-center gap-2">
+                  {/* Mode Badge */}
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wide",
+                      stripeSettings.stripe_mode === "live"
+                        ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                        : "bg-amber-100 text-amber-800 border border-amber-300"
+                    )}
+                  >
+                    {stripeSettings.stripe_mode === "live" ? (
+                      <>
+                        <Zap className="h-3 w-3 text-emerald-600 fill-emerald-500" />
+                        <span>Live Mode</span>
+                      </>
+                    ) : (
+                      <>
+                        <FlaskConical className="h-3 w-3 text-amber-600" />
+                        <span>Test / Sandbox</span>
+                      </>
+                    )}
+                  </span>
+
+                  {/* Active/Inactive Badge */}
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wide",
+                      stripeSettings.stripe_active
+                        ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                        : "bg-slate-100 text-slate-800 border border-slate-300"
+                    )}
+                  >
+                    {stripeSettings.stripe_active ? (
+                      <>
+                        <ShieldCheck className="h-3 w-3 text-emerald-600" />
+                        <span>Active</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldAlert className="h-3 w-3 text-amber-600" />
+                        <span>Inactive</span>
+                      </>
+                    )}
+                  </span>
+                </div>
               </div>
 
-              <h2 className="font-heading text-xl font-bold text-navy-950">
-                Stripe Donations Status
-              </h2>
+              <div>
+                <h2 className="font-heading text-xl font-bold text-navy-950">
+                  Stripe Payment Settings
+                </h2>
+                <p className="mt-1 text-xs text-navy-600 leading-relaxed">
+                  Switch between <strong>Test / Sandbox</strong> mode for simulated transactions and <strong>Live Production</strong> mode for real donations.
+                </p>
+              </div>
 
-              <p className="mt-2 text-xs text-navy-600 leading-relaxed">
-                When <strong>ACTIVE</strong>, visitors on <code>/donate</code> checkout directly via
-                Stripe. When <strong>INACTIVE</strong>, visitors submit a donation request pledge
-                form for manual team follow-up.
-              </p>
+              {/* Mode Switcher Segmented Control */}
+              <div className="rounded-2xl border border-navy-100 bg-surface-light p-1.5 flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => handleSetMode("test")}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all",
+                    stripeSettings.stripe_mode === "test"
+                      ? "bg-white text-navy-950 shadow-sm border border-navy-200/80 ring-1 ring-black/5"
+                      : "text-navy-600 hover:text-navy-900 hover:bg-white/50"
+                  )}
+                >
+                  <FlaskConical className="h-3.5 w-3.5 text-amber-600" />
+                  <span>Test (Sandbox) Mode</span>
+                  {stripeSettings.stripe_mode === "test" && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                  )}
+                </button>
 
-              <div className="mt-4 pt-3 border-t border-navy-50 text-[11px] text-navy-500">
-                <span>Stripe API Key status: </span>
-                {stripeSettings.is_configured ? (
-                  <span className="font-bold text-emerald-700">Configured in environment</span>
-                ) : (
-                  <span className="font-bold text-amber-700">
-                    Not configured (Set STRIPE_SECRET_KEY in .env.local)
+                <button
+                  type="button"
+                  onClick={() => handleSetMode("live")}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all",
+                    stripeSettings.stripe_mode === "live"
+                      ? "bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-700"
+                      : "text-navy-600 hover:text-navy-900 hover:bg-white/50"
+                  )}
+                >
+                  <Zap className="h-3.5 w-3.5 text-emerald-200" />
+                  <span>Live Production Mode</span>
+                  {stripeSettings.stripe_mode === "live" && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                  )}
+                </button>
+              </div>
+
+              {/* Key Diagnostic Info */}
+              <div className="rounded-xl border border-navy-50 bg-navy-50/50 p-3 space-y-1.5 text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-navy-600">Active Mode API Key:</span>
+                  {stripeSettings.is_configured ? (
+                    <span className="font-bold text-emerald-700 flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3" /> Configured &amp; Ready
+                    </span>
+                  ) : (
+                    <span className="font-bold text-amber-700 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" /> Missing {stripeSettings.stripe_mode === "live" ? "STRIPE_LIVE_SECRET_KEY" : "STRIPE_TEST_SECRET_KEY"}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center justify-between text-navy-500 pt-1 border-t border-navy-100/60">
+                  <span>Environment Keys Status:</span>
+                  <span className="font-semibold">
+                    Test Sandbox: {stripeSettings.is_test_configured ? "✅ Configured" : "⚠️ Missing"} | Live: {stripeSettings.is_live_configured ? "✅ Configured" : "⚠️ Missing"}
                   </span>
-                )}
+                </div>
               </div>
             </div>
 
             {/* Toggle Button */}
-            <div>
+            <div className="pt-2">
               <button
                 type="button"
                 onClick={handleToggleStripe}
                 className={cn(
-                  "w-full flex items-center justify-center gap-2 rounded-2xl py-3.5 px-4 text-sm font-bold text-white transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500",
+                  "w-full flex items-center justify-center gap-2 rounded-2xl py-3 px-4 text-xs font-bold text-white transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500",
                   stripeSettings.stripe_active
                     ? "bg-amber-600 hover:bg-amber-700"
                     : "bg-emerald-600 hover:bg-emerald-700"
@@ -341,12 +449,12 @@ export default function AdminDonationsPage() {
               >
                 {stripeSettings.stripe_active ? (
                   <>
-                    <ToggleRight className="h-5 w-5" />
-                    <span>Deactivate Stripe (Switch to Request Form)</span>
+                    <ToggleRight className="h-4 w-4" />
+                    <span>Deactivate Stripe (Switch to Pledge Form)</span>
                   </>
                 ) : (
                   <>
-                    <ToggleLeft className="h-5 w-5" />
+                    <ToggleLeft className="h-4 w-4" />
                     <span>Activate Stripe Payments Globally</span>
                   </>
                 )}
@@ -355,7 +463,7 @@ export default function AdminDonationsPage() {
           </div>
 
           {/* Card 2: Summary Stats */}
-          <div className="lg:col-span-7 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="lg:col-span-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
             <div className="rounded-2xl border border-navy-100 bg-white p-5 shadow-xs flex flex-col justify-between">
               <span className="text-xs font-semibold text-navy-500">Total Raised</span>
               <div className="font-heading text-2xl font-black text-navy-950 mt-2">
@@ -685,20 +793,35 @@ export default function AdminDonationsPage() {
                         {don.frequency === "monthly" ? "Monthly" : "One-Time"}
                       </td>
                       <td className="px-4 py-3">
-                        <span
-                          className={cn(
-                            "rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase",
-                            don.status === "succeeded"
-                              ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                              : don.status === "request_submitted"
-                              ? "bg-amber-50 text-amber-800 border border-amber-200"
-                              : don.status === "pending"
-                              ? "bg-blue-50 text-blue-800 border border-blue-200"
-                              : "bg-red-50 text-red-800 border border-red-200"
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span
+                            className={cn(
+                              "rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase",
+                              don.status === "succeeded"
+                                ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                                : don.status === "request_submitted"
+                                ? "bg-amber-50 text-amber-800 border border-amber-200"
+                                : don.status === "pending"
+                                ? "bg-blue-50 text-blue-800 border border-blue-200"
+                                : "bg-red-50 text-red-800 border border-red-200"
+                            )}
+                          >
+                            {don.status.replace("_", " ")}
+                          </span>
+
+                          {don.stripe_mode && (
+                            <span
+                              className={cn(
+                                "rounded px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider",
+                                don.stripe_mode === "test"
+                                  ? "bg-amber-100 text-amber-800 border border-amber-300"
+                                  : "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                              )}
+                            >
+                              {don.stripe_mode === "test" ? "Sandbox" : "Live"}
+                            </span>
                           )}
-                        >
-                          {don.status.replace("_", " ")}
-                        </span>
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-navy-600 max-w-xs truncate">
                         {don.message || don.admin_reference || "-"}

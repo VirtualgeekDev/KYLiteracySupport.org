@@ -233,6 +233,18 @@ export default function CustomPaymentLinkPage() {
               )}
             </div>
 
+            {linkData?.stripeActive && linkData?.stripeMode === "test" && (
+              <div className="rounded-xl border border-amber-300 bg-amber-50/80 px-3.5 py-2 text-xs text-amber-950 flex items-center justify-between">
+                <span className="flex items-center gap-1.5 font-semibold">
+                  <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                  Sandbox Test Mode Active
+                </span>
+                <span className="text-[10px] font-extrabold uppercase text-amber-800 bg-amber-200 px-2 py-0.5 rounded border border-amber-300">
+                  Simulated
+                </span>
+              </div>
+            )}
+
             {/* Error & Success Messages */}
             {errorMsg && (
               <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-red-900 text-sm flex items-start gap-2.5">

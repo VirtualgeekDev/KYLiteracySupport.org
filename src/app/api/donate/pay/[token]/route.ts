@@ -22,7 +22,8 @@ export async function GET(
   }
 
   const settings = getSettings();
-  const configured = isStripeConfigured();
+  const activeMode = settings.stripe_mode || "test";
+  const configured = isStripeConfigured(activeMode);
   const stripeActive = settings.stripe_active && configured;
 
   return NextResponse.json({
@@ -34,5 +35,6 @@ export async function GET(
     donorEmail: link.donor_email || "",
     reference: link.reference || "",
     stripeActive,
+    stripeMode: activeMode,
   });
 }

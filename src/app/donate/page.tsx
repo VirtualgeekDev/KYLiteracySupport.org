@@ -34,6 +34,7 @@ export default function DonatePage() {
 
   // Payment system state
   const [stripeActive, setStripeActive] = useState<boolean | null>(null);
+  const [stripeMode, setStripeMode] = useState<"live" | "test">("test");
   const [loadingConfig, setLoadingConfig] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -46,6 +47,7 @@ export default function DonatePage() {
         const res = await fetch("/api/donate/config");
         const data = await res.json();
         setStripeActive(Boolean(data.stripeActive));
+        if (data.stripeMode) setStripeMode(data.stripeMode);
       } catch (err) {
         console.error("Failed to load donation configuration:", err);
         setStripeActive(false);
@@ -297,18 +299,31 @@ export default function DonatePage() {
             {!loadingConfig && (
               <div className="mb-8">
                 {stripeActive ? (
-                  <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 flex items-center justify-between gap-3 text-xs text-emerald-900">
-                    <div className="flex items-center gap-2.5">
-                      <ShieldCheck className="h-5 w-5 text-emerald-600 shrink-0" />
-                      <span>
-                        <strong>Instant Checkout Active:</strong> Secure 256-bit encrypted checkout
-                        powered by Stripe.
+                  stripeMode === "test" ? (
+                    <div className="rounded-2xl border border-amber-300 bg-amber-50/80 p-4 flex items-center justify-between gap-3 text-xs text-amber-950">
+                      <div className="flex items-center gap-2.5">
+                        <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
+                        <span>
+                          <strong>Sandbox Mode Active:</strong> Test donations enabled. No real credit card charges will occur.
+                        </span>
+                      </div>
+                      <span className="rounded-full bg-amber-200 px-2.5 py-0.5 font-extrabold uppercase tracking-wider text-[10px] text-amber-900 shrink-0 border border-amber-300">
+                        Test Mode
                       </span>
                     </div>
-                    <span className="rounded-full bg-emerald-200/80 px-2.5 py-0.5 font-bold uppercase tracking-wider text-[10px] text-emerald-800 shrink-0">
-                      Card / Stripe
-                    </span>
-                  </div>
+                  ) : (
+                    <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 flex items-center justify-between gap-3 text-xs text-emerald-900">
+                      <div className="flex items-center gap-2.5">
+                        <ShieldCheck className="h-5 w-5 text-emerald-600 shrink-0" />
+                        <span>
+                          <strong>Instant Checkout Active:</strong> Secure 256-bit encrypted checkout powered by Stripe.
+                        </span>
+                      </div>
+                      <span className="rounded-full bg-emerald-200/80 px-2.5 py-0.5 font-bold uppercase tracking-wider text-[10px] text-emerald-800 shrink-0">
+                        Live / Stripe
+                      </span>
+                    </div>
+                  )
                 ) : (
                   <div className="rounded-2xl border border-navy-200 bg-navy-50/70 p-5 text-navy-800 space-y-2">
                     <div className="flex items-center gap-2 font-bold text-sm text-navy-900">

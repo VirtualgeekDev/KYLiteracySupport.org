@@ -50,6 +50,8 @@ export async function POST(request: Request) {
             : session.payment_intent?.id;
         const customerId =
           typeof session.customer === "string" ? session.customer : session.customer?.id;
+        const eventMode: "live" | "test" =
+          (session.metadata?.stripeMode as "live" | "test") || (event.livemode ? "live" : "test");
 
         let record = donationId
           ? updateDonation(donationId, {
@@ -58,6 +60,7 @@ export async function POST(request: Request) {
               stripe_customer_id: customerId,
               donor_name: donorName,
               donor_email: donorEmail,
+              stripe_mode: eventMode,
             })
           : null;
 
@@ -71,6 +74,7 @@ export async function POST(request: Request) {
               stripe_customer_id: customerId,
               donor_name: donorName,
               donor_email: donorEmail,
+              stripe_mode: eventMode,
             });
           }
         }
@@ -90,6 +94,7 @@ export async function POST(request: Request) {
             status: "succeeded",
             payment_link_token: token,
             admin_reference: session.metadata?.adminReference,
+            stripe_mode: eventMode,
           });
         }
 
@@ -145,6 +150,7 @@ export async function POST(request: Request) {
                 : undefined,
             status: "succeeded",
             admin_reference: `Recurring renewal: ${invoice.id}`,
+            stripe_mode: event.livemode ? "live" : "test",
           });
 
           await notifyTeamDonationSuccess({

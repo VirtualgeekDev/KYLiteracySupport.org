@@ -24,7 +24,8 @@ export async function POST(request: Request) {
 
     // Check if Stripe is active and configured
     const settings = getSettings();
-    const configured = isStripeConfigured();
+    const activeMode = settings.stripe_mode || "test";
+    const configured = isStripeConfigured(activeMode);
 
     if (!settings.stripe_active || !configured) {
       return NextResponse.json(
@@ -66,6 +67,7 @@ export async function POST(request: Request) {
       payment_link_token: paymentLinkToken,
       admin_reference: adminReference,
       message: message?.trim(),
+      stripe_mode: activeMode,
     });
 
     // 2. Create Stripe Checkout session
@@ -85,6 +87,7 @@ export async function POST(request: Request) {
       message,
       successUrl,
       cancelUrl,
+      stripeMode: activeMode,
     });
 
     return NextResponse.json({

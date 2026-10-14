@@ -13,6 +13,7 @@ export interface DonationRecord {
   stripe_session_id?: string;
   stripe_payment_intent_id?: string;
   stripe_customer_id?: string;
+  stripe_mode?: "live" | "test";
   status: "pending" | "succeeded" | "failed" | "request_submitted" | "cancelled";
   payment_link_token?: string;
   admin_reference?: string;
@@ -37,6 +38,7 @@ export interface PaymentLinkRecord {
 
 export interface SettingsRecord {
   stripe_active: boolean;
+  stripe_mode: "live" | "test";
   updated_at: string;
 }
 
@@ -58,7 +60,8 @@ const DB_FILE = path.join(DB_DIR, "donations.db.json");
 
 const DEFAULT_DB: DatabaseSchema = {
   settings: {
-    stripe_active: false, // Default inactive until Stripe keys configured or activated by admin
+    stripe_active: true, // Activated
+    stripe_mode: "test", // User requested test mode active
     updated_at: new Date().toISOString(),
   },
   donations: [],
