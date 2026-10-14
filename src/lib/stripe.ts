@@ -27,7 +27,7 @@ export function getStripeClient(): Stripe {
 
 export function isStripeConfigured(): boolean {
   const secret = process.env.STRIPE_SECRET_KEY;
-  return Boolean(secret && secret.startsWith("sk_"));
+  return Boolean(secret && (secret.startsWith("sk_") || secret.startsWith("rk_")));
 }
 
 export function getStripePublishableKey(): string {
