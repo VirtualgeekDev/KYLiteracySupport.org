@@ -55,6 +55,7 @@ export default function AdminDonationsPage() {
   const [linkDonorName, setLinkDonorName] = useState("");
   const [linkDonorEmail, setLinkDonorEmail] = useState("");
   const [linkReference, setLinkReference] = useState("");
+  const [linkNote, setLinkNote] = useState("");
   const [isGeneratingLink, setIsGeneratingLink] = useState(false);
   const [lastGeneratedUrl, setLastGeneratedUrl] = useState<string | null>(null);
   const [copiedUrl, setCopiedUrl] = useState(false);
@@ -181,6 +182,7 @@ export default function AdminDonationsPage() {
           donor_name: linkDonorName.trim() || undefined,
           donor_email: linkDonorEmail.trim() || undefined,
           reference: linkReference.trim() || undefined,
+          note: linkNote.trim() || undefined,
         }),
       });
 
@@ -195,6 +197,7 @@ export default function AdminDonationsPage() {
         setLinkDonorName("");
         setLinkDonorEmail("");
         setLinkReference("");
+        setLinkNote("");
         fetchData();
       } else {
         setFeedbackMsg({ type: "error", text: data.error || "Failed to create payment link." });
@@ -610,6 +613,19 @@ export default function AdminDonationsPage() {
               />
             </div>
 
+            <div className="sm:col-span-6">
+              <label className="block text-xs font-bold uppercase tracking-wider text-navy-800 mb-1">
+                Note / Subtitle <span className="font-normal text-navy-400">(Optional — displayed as subtitle on the payment link page)</span>
+              </label>
+              <input
+                type="text"
+                value={linkNote}
+                onChange={(e) => setLinkNote(e.target.value)}
+                placeholder="e.g. Thank you for supporting our community reading and tutoring initiative"
+                className="w-full rounded-xl border border-navy-200 px-3 py-2.5 text-sm text-navy-900 placeholder:text-navy-400 focus:outline-none focus:ring-2 focus:ring-gold-500"
+              />
+            </div>
+
             <div className="sm:col-span-6 pt-2">
               <button
                 type="submit"
@@ -715,6 +731,11 @@ export default function AdminDonationsPage() {
                           {link.reference && (
                             <div className="text-[10px] text-gold-700 italic">
                               Ref: {link.reference}
+                            </div>
+                          )}
+                          {link.note && (
+                            <div className="text-[10px] text-navy-600 line-clamp-1 mt-0.5">
+                              Note: {link.note}
                             </div>
                           )}
                         </td>

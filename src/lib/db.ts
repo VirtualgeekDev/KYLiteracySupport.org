@@ -31,6 +31,7 @@ export interface PaymentLinkRecord {
   donor_name?: string;
   donor_email?: string;
   reference?: string;
+  note?: string;
   status: "active" | "completed" | "revoked";
   created_at: string;
   updated_at: string;
@@ -235,6 +236,7 @@ export function createPaymentLink(data: {
   donor_name?: string;
   donor_email?: string;
   reference?: string;
+  note?: string;
 }): PaymentLinkRecord {
   const db = ensureDb();
   const id = `plink_${crypto.randomBytes(6).toString("hex")}`;
@@ -260,6 +262,7 @@ export function createPaymentLink(data: {
     donor_name: data.donor_name?.trim() || undefined,
     donor_email: data.donor_email?.trim() || undefined,
     reference: data.reference?.trim() || undefined,
+    note: data.note?.trim() || undefined,
     status: "active",
     created_at: now,
     updated_at: now,

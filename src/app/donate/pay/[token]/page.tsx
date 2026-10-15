@@ -364,6 +364,11 @@ export default function CustomPaymentLinkPage() {
                 <Sparkles className="h-3.5 w-3.5 text-gold-600" />
                 <span>{t.badge}</span>
               </div>
+              {linkData.note && (
+                <p className="text-sm sm:text-base font-medium text-navy-600 max-w-md mx-auto pt-1 leading-relaxed">
+                  {linkData.note}
+                </p>
+              )}
             </div>
 
             {/* Requested Amount Display */}

@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { amount, donor_name, donor_email, reference, currency, language } = body;
+    const { amount, donor_name, donor_email, reference, currency, language, note } = body;
 
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount < 1) {
@@ -39,6 +39,7 @@ export async function POST(request: Request) {
       reference,
       currency,
       language,
+      note,
     });
 
     // Determine host for generated link URL
